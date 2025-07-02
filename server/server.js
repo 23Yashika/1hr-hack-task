@@ -14,6 +14,9 @@ app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
 app.use("/uploads", express.static("uploads"));
+app.get("/", (req, res) => {
+  res.send("Welcome to Task Manager API");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskroutes);

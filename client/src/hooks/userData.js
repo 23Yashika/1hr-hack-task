@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const useUserData = (userId) => {
+  const Navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [target, setTarget] = useState("");
   const [time, setTime] = useState("");
-
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +33,7 @@ const useUserData = (userId) => {
     try {
       const response = await axios.post(
         "http://localhost:5002/api/tasks",
-        { userId, title, description, target, dateTime: time },
+        { title, description, target, dateTime: time },
         { headers: { "Content-Type": "application/json" } }
       );
       setTasks([...tasks, response.data]);
@@ -53,6 +54,13 @@ const useUserData = (userId) => {
         { headers: { "Content-Type": "application/json" } }
       );
       setTasks(tasks.map((task) => (task._id === id ? response.data : task)));
+      // Reset form fields after update
+      setTitle("");
+      setDescription("");
+      setTarget("");
+      setTime("");
+      console.log("Task updated successfully:", response.data);
+      Navigate(`/home/${userId}`);
     } catch (err) {
       console.error("Error updating task:", err);
     }

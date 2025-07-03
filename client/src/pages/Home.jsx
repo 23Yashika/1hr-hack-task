@@ -1,9 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import useUserData from "../hooks/userData";
+import { Link } from "react-router-dom";
 const Home = () => {
   const { userId } = useParams();
-  
+
   const {
     setTitle,
     setDescription,
@@ -13,7 +14,6 @@ const Home = () => {
     tasks,
     loading,
     error,
-    
   } = useUserData(userId);
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -76,6 +76,24 @@ const Home = () => {
               <p className="text-sm text-gray-500">
                 Time: {new Date(task.dateTime).toLocaleString()}
               </p>
+              <div className="flex gap-2 mt-2">
+                <Link to={`/update/${task._id}`}>
+                  <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition">
+                    Update
+                  </button>
+                </Link>
+                <button
+                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                  onClick={() => {
+                    // Call your delete logic here
+                    if (typeof task.onDelete === "function") {
+                      task.onDelete(task._id);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
           {loading && <p>Loading tasks...</p>}

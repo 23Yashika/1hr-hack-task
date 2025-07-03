@@ -14,6 +14,7 @@ const Home = () => {
     tasks,
     loading,
     error,
+    deleteTask,
   } = useUserData(userId);
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -30,6 +31,7 @@ const Home = () => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div className="mb-4">
@@ -38,6 +40,7 @@ const Home = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div className="mb-4">
@@ -46,6 +49,7 @@ const Home = () => {
             onChange={(e) => setTarget(e.target.value)}
             placeholder="Target to achieve"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div>
@@ -53,6 +57,7 @@ const Home = () => {
             type="datetime-local"
             onChange={(e) => setTime(e.target.value)}
             className="w-full mb-5 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <button
@@ -68,34 +73,31 @@ const Home = () => {
           Your Tasks
         </h2>
         <div className="w-full max-w-md bg-white p-6 rounded shadow-md">
-          {tasks.map((task) => (
-            <div key={task._id} className="mb-4 p-4 border-b">
-              <h3 className="text-lg font-bold">{task.title}</h3>
-              <p>{task.description}</p>
-              <p className="text-sm text-gray-500">Target: {task.target}</p>
-              <p className="text-sm text-gray-500">
-                Time: {new Date(task.dateTime).toLocaleString()}
-              </p>
-              <div className="flex gap-2 mt-2">
-                <Link to={`/update/${task._id}`}>
-                  <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition">
-                    Update
-                  </button>
-                </Link>
-                <button
-                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-                  onClick={() => {
-                    // Call your delete logic here
-                    if (typeof task.onDelete === "function") {
-                      task.onDelete(task._id);
-                    }
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+          {tasks.length > 0
+            ? tasks.map((task) => (
+                <div key={task._id} className="mb-4 p-4 border-b">
+                  <h3 className="text-lg font-bold">{task.title}</h3>
+                  <p>{task.description}</p>
+                  <p className="text-sm text-gray-500">Target: {task.target}</p>
+                  <p className="text-sm text-gray-500">
+                    Time: {new Date(task.dateTime).toLocaleString()}
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Link to={`/update/${task._id}/${userId}`}>
+                      <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition">
+                        Update
+                      </button>
+                    </Link>
+                    <button
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                      onClick={() => deleteTask(task._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            : !loading && <p className="text-gray-500">No tasks found.</p>}
           {loading && <p>Loading tasks...</p>}
           {error && <p className="text-red-500">{error}</p>}
         </div>

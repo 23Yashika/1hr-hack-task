@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import useUserData from "../hooks/userData";
 
 const Update = () => {
-  const { taskId } = useParams();
+  const { taskId, userId } = useParams();
   const {
     title,
     setTitle,
@@ -17,18 +17,20 @@ const Update = () => {
     tasks,
     loading,
     error,
-  } = useUserData(taskId);
+  } = useUserData(userId);
 
-  // 🛠️ Populate form fields once the task is fetched
   useEffect(() => {
-    const currentTask = tasks.find((task) => task._id === taskId);
-    if (currentTask) {
-      setTitle(currentTask.title || "");
-      setDescription(currentTask.description || "");
-      setTarget(currentTask.target || "");
-      setTime(currentTask.dateTime?.slice(0, 16) || ""); // datetime-local expects this format
+    if (!loading && tasks && tasks.length > 0) {
+      const currentTask = tasks.find((task) => task._id === taskId);
+      if (currentTask) {
+        setTitle(currentTask.title || "");
+        setDescription(currentTask.description || "");
+        setTarget(currentTask.target || "");
+        setTime(currentTask.dateTime?.slice(0, 16) || "");
+      }
     }
-  }, [tasks, taskId]);
+    // eslint-disable-next-line
+  }, [tasks, taskId, loading, setTitle, setDescription, setTarget, setTime]);
 
   return (
     <div>
@@ -49,6 +51,7 @@ const Update = () => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div className="mb-4">
@@ -58,6 +61,7 @@ const Update = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div className="mb-4">
@@ -67,6 +71,7 @@ const Update = () => {
             onChange={(e) => setTarget(e.target.value)}
             placeholder="Target to achieve"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <div>
@@ -75,11 +80,13 @@ const Update = () => {
             value={time}
             onChange={(e) => setTime(e.target.value)}
             className="w-full mb-5 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
           />
         </div>
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          disabled={loading}
         >
           Update Task
         </button>

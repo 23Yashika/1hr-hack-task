@@ -68,7 +68,7 @@ const useUserData = (userId) => {
       setTarget("");
       setTime("");
       setError(null);
-      await fetchTasks();
+      await fetchTasks(); // ye bhadwi line is important to refresh tasks after update
       navigate(`/home/${userId}`);
     } catch (err) {
       setError("Error updating task: " + err.message);
@@ -83,7 +83,7 @@ const useUserData = (userId) => {
       await axios.delete(`http://localhost:5002/api/tasks/${id}`);
       setTasks(tasks.filter((task) => task._id !== id));
       setError(null);
-      await fetchTasks();
+      await fetchTasks(); // isme bhi wahi bhadwi line hai which refreshes tasks after deletion
     } catch (err) {
       setError("Error deleting task: " + err.message);
     } finally {
